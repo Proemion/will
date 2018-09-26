@@ -6,6 +6,7 @@ import requests
 import sys
 import time
 import traceback
+import socket
 from websocket import WebSocketConnectionClosedException
 
 from markdownify import MarkdownConverter
@@ -556,8 +557,8 @@ class SlackBackend(IOBackend, SleepMixin, StorageMixin):
                             current_poll_count = 0
 
                         self.sleep_for_event_loop()
-            except (WebSocketConnectionClosedException, SlackConnectionError):
-                logging.error('Encountered connection error attempting reconnect in 2 seconds')
+            except (WebSocketConnectionClosedException, SlackConnectionError, socket.error):
+                logging.error('Encountered connection error attempting reconnect in 2 seconds', exc_info=True)
                 time.sleep(2)
             except (KeyboardInterrupt, SystemExit):
                 break
